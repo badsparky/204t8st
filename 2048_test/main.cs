@@ -91,8 +91,7 @@ public static class Program
             }
             string average_count= ""+(double)sum_count / count;
             w.WriteLine("\n**************************\n");
-            w.WriteLine("depth : 8");
-            w.WriteLine("trials : 1500");
+            w.WriteLine("Solver : "+type_solver.Name);
             w.WriteLine("試行回数 : " + times);
             w.WriteLine("精度 : " + accuracy);
             w.WriteLine("平均手数 （成功）: " + (double.TryParse( average_count,out double result)?average_count:"no data"));
