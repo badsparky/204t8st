@@ -21,15 +21,16 @@ public class B22Placer : PlaceAgent
     public Tuple<Tuple<int, int>, int> Montecarlo(Tuple<int, int>[] candidates, GameField latest)
     {
         int depth = 100;
-        double[] score_array = new double[candidates.Length];
+        double[] score_array = new double[candidates.Length*2];
         double min = 999999;
         int ans_number = 0;
+        int[] candidates_number = { 2, 4 };
         Tuple<int, int> ans_coordinate = candidates[0];
-        for(int i = 2; i <= 4; i += 2)
+        for(int i = 0; i <candidates_number.Length; i ++)
         {
             for(int j = 0; j < candidates.Length; j ++)
             {
-                GameField test = new GameField(latest).putNewPieceAt(candidates[j], i);
+                GameField test = new GameField(latest).putNewPieceAt(candidates[j], candidates_number[i]);
                 for(int k = 0; k < depth; k++)
                 {
                     while (!test.checkmate())
@@ -37,13 +38,13 @@ public class B22Placer : PlaceAgent
                         Challenge(test);
                         score_array[j]++;
                     }
-                    score_array[j] += Math.Log(test.maxpiece, 2);
+                    score_array[(i+1)*j] += Math.Log(test.maxpiece, 2);
                 }
-                if(min > score_array[j])
+                if(min > score_array[(i + 1) * j])
                 {
-                    ans_number = i;
+                    ans_number = candidates_number[i];
                     ans_coordinate = candidates[j];
-                    min = score_array[j];
+                    min = score_array[(i + 1) * j];
                 }
             }
         }
