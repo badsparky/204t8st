@@ -34,17 +34,17 @@ public static class Program
         //*********************
         int times =2;//10以上は、諸事情により10の倍数のみ
         string path_result = "ResultFile.txt";
-        string path_log = "";
+        string path_log = "";//マルチタスクだとバグる
         Type type_solver = typeof(B22Solver);//()内変更
         //************************
         DateTime start =DateTime.Now;
         DateTime end;
         Random rand;
+        double sum_count_total = 0;
         int[] log_score = new int[times];
         int[] log_count = new int[times];
-        string tmp = "";
         rand = new Random();
-        int limit_a = 20;
+        int limit_a = 10;
         int a = times<limit_a?times:limit_a;
         times -= times%a;
         for (int i = 0; i <times/a ; i++)
@@ -57,7 +57,6 @@ public static class Program
                     Thread.Sleep(j);
                     string[] str = new string[2];
                     str[0] = rand.Next().ToString();
-                    tmp += "+++"+str[0];
                     str[1] = path_log;
                     return Main_old(str,type_solver);
                 })) ;
@@ -67,17 +66,17 @@ public static class Program
             {
                 log_score[i*limit_a+j] = tasks[j].Result[0];
                 log_count[i*limit_a+j] = tasks[j].Result[1];
+                sum_count_total+=tasks[j].Result[1];
             }
-            Console.WriteLine(tmp);
         }
         
 
 
 
         end =DateTime.Now;
-        int count = log_score.Count(x => x == 2048);
-        int sum_count=0;
-        double accuracy = (double)count/times;
+        int count_success = log_score.Count(x => x == 2048);
+        int sum_count_success=0;
+        double accuracy = (double)count_success/times;
         Console.WriteLine("精度 : "+accuracy);
 
         using (FileStream fs = File.Create("./"+path_result));
@@ -87,14 +86,15 @@ public static class Program
             for (int i = 0; i < log_score.Length; i++)
             {
                 w.WriteLine($"  score : {log_score[i]} count : {log_count[i]} ");
-                if (log_score[i]==2048)sum_count += log_count[i];
+                if (log_score[i]==2048)sum_count_success += log_count[i];
             }
-            string average_count= ""+(double)sum_count / count;
+            string average_count= ""+(double)sum_count_success / count_success;
             w.WriteLine("\n**************************\n");
             w.WriteLine("Solver : "+type_solver.Name);
             w.WriteLine("試行回数 : " + times);
             w.WriteLine("精度 : " + accuracy);
             w.WriteLine("平均手数 （成功）: " + (double.TryParse( average_count,out double result)?average_count:"no data"));
+            w.WriteLine("平均手数 （全部）: " + sum_count_total/times);
             w.WriteLine("平均所要時間（全部） : " +(end-start).TotalMinutes/times+"分");
             w.Close();
 
