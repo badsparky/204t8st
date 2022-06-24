@@ -32,7 +32,7 @@ public static class Program
     public static void Main()
     {
         //*********************
-        int times =2;//10以上は、諸事情により10の倍数のみ
+        int times =10;//10以上は、諸事情により10の倍数のみ
         string path_result = "ResultFile.txt";
         string path_log = "";//マルチタスクだとバグる
         Type type_solver = typeof(B22Solver);//()内変更
@@ -88,8 +88,11 @@ public static class Program
                 w.WriteLine($"  score : {log_score[i]} count : {log_count[i]} ");
                 if (log_score[i]==2048)sum_count_success += log_count[i];
             }
+
             string average_count= ""+(double)sum_count_success / count_success;
             w.WriteLine("\n**************************\n");
+            w.WriteLine("平均スコアLog2 : "+log_score.Average());
+            w.WriteLine("平均スコア : "+log_score.Select(x=>Math.Log(x,2)).Average());
             w.WriteLine("Solver : "+type_solver.Name);
             w.WriteLine("試行回数 : " + times);
             w.WriteLine("精度 : " + accuracy);
